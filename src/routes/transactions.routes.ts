@@ -1,26 +1,23 @@
 import { Router } from 'express';
+import multer from 'multer';
+import TransactionController from '../controllers/TransactionController';
+import uploadImportTransactionConfig from '../config/uploadImportTransactionConfig';
 
-// import TransactionsRepository from '../repositories/TransactionsRepository';
-// import CreateTransactionService from '../services/CreateTransactionService';
-// import DeleteTransactionService from '../services/DeleteTransactionService';
-// import ImportTransactionsService from '../services/ImportTransactionsService';
+const transactionController = new TransactionController();
 
-const transactionsRouter = Router();
+const router = Router();
 
-transactionsRouter.get('/', async (request, response) => {
-  // TODO
-});
+const upload = multer(uploadImportTransactionConfig);
 
-transactionsRouter.post('/', async (request, response) => {
-  // TODO
-});
+router.route('/').get(transactionController.index);
+router.route('/:id').get(transactionController.show);
+router
+  .route('/import')
+  .post(upload.single('file'), transactionController.import);
+router.route('/').post(transactionController.create);
+router.route('/:id').delete(transactionController.destroy);
 
-transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
-});
-
-transactionsRouter.post('/import', async (request, response) => {
-  // TODO
-});
-
-export default transactionsRouter;
+export default {
+  action: '/transactions',
+  router,
+};
